@@ -11,3 +11,6 @@ To install the program, download the exe or py file from this repository.
 
 ## How it works
 This program uses the mediapipe and opencv library to track the user's iris and measure the x,y,z coordinates. The coordinates are then used to calcultate what points on the display are going to look identical to what points in space. The results are going to be calculated for each of the eight points of a cube which is shown on screen.
+
+## Downloads
+-Download exe file from here: https://drive.google.com/u/0/uc?id=19OfKPzXXfXpw-ymoI-PKIASlqpdydD6H&export=download
