@@ -1,29 +1,41 @@
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+from math import sqrt
 import math
 import pygame
 import cv2 as cv
-import numpy as np
 import mediapipe as mp
 import keyboard
 
 #set parameters
-#lenth(in cm)                   100px = 2.35cm****
+#lenth(in cm)                   100px = 2.25cm****
 lic = 2  #한 변의 길이
 w = 1920 #스크린 가로
 h = 1080 #스크린 세로
-d = 5   #z축 방향 거리
+d = 4   #z축 방향 거리
 eye_L = True
 
-scrs = int(input("If your monitor resolution is 4K (UHD), press '1'. If your monitor resolution is 1080P (FHD), press'2'."))
-if scrs == 1:
+
+
+print('Thank you for checking out my program!')
+print()
+print("Don't forget to close one of your eyes and look at the red dot on your screen!")
+print()
+
+scrs = int(input("Select your monitor resolution. Type 1 for FHD, 2 for QHD, 3 for UHD:  "))
+if scrs == 3:
     w = 3840
     h = 2160
+if scrs == 2:
+    w= 2560
+    h=1440
 else: 
     w = 1920
     h = 1080
 
-blk = int(input('Select the background color of the 3D effect. Press 1 for black (recommended) and 2 for white.'))
+srcs_d= float(input('Type in your monitor size. (In inches, diagonal):'))
+
+blk = int(input('Select the background color of the 3D effect. Press 1 for black and 2 for white.'))
 if blk == 1:
     bg_black = True
 else:
@@ -33,16 +45,17 @@ eyei = int(input("Select the eye that will be open. Press 1 for your right eye a
 if eyei == 1:
     eye_L = False
 else: eye_L = True
-lic = input('Write the length of one edge of the cube (In centimeters). Leaving it blank and pressing Enter will keep it at default.')
+
+lic = input('Write the length of one edge of the cube (In centimeters). Leaving it blank and pressing Enter will keep it at default:')
 if len(lic) == 0:
     lic = 2
 else:
-    lic = int(lic)
-d = input('Write the distance of the cube from the screen (Also in centimeters). Leaving it blank and pressing Enter will keep it at default.')
+    lic = float(lic)
+d = input('Write the distance of the cube from the screen (Also in centimeters). Leaving it blank and pressing Enter will keep it at default:')
 if len(d) == 0:
     d = 5
 else:
-    d = int(d)
+    d = float(d)
 
 if eye_L == True:
     eye = 470
@@ -50,7 +63,7 @@ else: eye = 475
 
 print()
 print()
-print('starting, press Esc to exit')
+print('starting, press Esc to exit.....')
 print()
 print()
 
@@ -60,14 +73,13 @@ print()
 
 
 def ctpx(a):
-    return 100*a/2.35
+    return a*sqrt((w**2+h**2))/40
 lipx = ctpx(lic)
-
 def mean(nums):
     return float(sum(nums)) / max(len(nums), 1)
 
 def ir2z(a):
-    return (w/1920)*50*32.4/a
+    return (1920/w)*50*32.4/a
 
 def ll(a,b,c,d):
     return math.sqrt((a-c)**2+(b-d)**2)
@@ -92,6 +104,10 @@ if bg_black == True:
 if bg_black == False:
     def cls():
         screen.fill(WHITE)
+
+def watch_here():
+    pygame.draw.circle(screen, (200,0,0), (w/2, h/2), 2)
+
 
 
 A1 = (w/2 - lipx/2, h/2 - lipx/2, d)
@@ -129,7 +145,7 @@ with mp_face_mesh.FaceMesh(
 
 
     # Set the height and width of the screen
-    size   = [1920, 1080]
+    size   = [w,h]
     screen = pygame.display.set_mode(size)
     state=True
     while state:
@@ -147,8 +163,8 @@ with mp_face_mesh.FaceMesh(
         results = face_mesh.process(rgb_frame)
         if results.multi_face_landmarks:
             mesh_points = results.multi_face_landmarks[0].landmark
-            num470x, num470y = mesh_points[eye].x*1920, mesh_points[eye].y*1080           #in case of left eye
-            num472x, num472y = mesh_points[eye+2].x*1920, mesh_points[eye+2].y*1080       #in case of left eye
+            num470x, num470y = mesh_points[eye].x*w, mesh_points[eye].y*h           #in case of left eye
+            num472x, num472y = mesh_points[eye+2].x*w, mesh_points[eye+2].y*h       #in case of left eye
 
             num470x_ls.append(num470x)
             num470x_filtered = mean(num470x_ls)
@@ -183,6 +199,7 @@ with mp_face_mesh.FaceMesh(
         A8ap = ITOS(V,A8)
 
         cls()
+        watch_here()
         con(A1ap, A2ap)
         con(A2ap, A3ap)
         con(A3ap, A4ap)
