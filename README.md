@@ -3,14 +3,17 @@
 To install the program, download the exe or py file from this repository.
 
 ## Usage
-1. Run the exe or py file.
-2. Enter the information required to the console window that shows up.
-3. Wait for the window with the cube to show up. The window may not show on the  top, so please check the taskbar.
-4. You can look anywhere on the screen with one of your eyes closed, but I find that the red dot on the middle of the screen works best.
-5. You can close the window by pressing ESC.
+1. place all three .py files in the same folder on your device.
+2. Run the camcal.py file, and follow the instructions to calibrate the tracking software to your camera setup. Make sure your camera's view is close to perpendicular with your screen for maximum accuracy.
+3. Enter the information required to the console window that shows up.
+4. After calibration, the file with the calibration data will be made.
+5. Run the 3D.py file
+6. Wait for the window with the cube to show up. The window may not show on the  top, so please check the taskbar.
+7. You can close the window by pressing ESC.
 
 ## How it works
-This program uses the mediapipe and opencv library to track the user's iris and measure the x,y,z coordinates. The coordinates are then used to calcultate what points on the display are going to look identical to what points in space. The results are going to be calculated for each of the eight points of a cube which is shown on screen.
+This program uses the mediapipe and opencv library to track the user's eyes and measure the x,y,z coordinates. The coordinates are then used to calcultate what points on the display are going to look identical to what points in space. The results are going to be calculated for each of the eight points of a cube which is shown on screen.
 
 ## Downloads
 -Download exe file from here: https://drive.google.com/u/0/uc?id=19OfKPzXXfXpw-ymoI-PKIASlqpdydD6H&export=download
+(this exe file is outdated. please use the py files for maximum performance.)
