@@ -7,6 +7,7 @@ import locshare
 import threading
 import time
 import json
+import camcal
 
 sceeninfocalibrated = False
 caminfocalibrated = True
@@ -16,7 +17,10 @@ def readfromjson(name):
         return data
 
 try: 
-    readfromjson('caminfo.json')
+    data = readfromjson('caminfo.json')
+    distincmparam = data[0]
+    distincm_subparam = data[1]
+    cam_y_offset = data[2]
 
 except:
     caminfocalibrated = False
@@ -30,9 +34,9 @@ location = locshare.location()
 
 #set parameters
 #lenth(in cm)
-lic = 3  #한 변의 길이
-w = 1920 #스크린 가로
-h = 1080 #스크린 세로
+lic = 3  
+w = 1920 
+h = 1080 
 screen_in = 15.6
 
 if not sceeninfocalibrated:
@@ -42,7 +46,21 @@ if not sceeninfocalibrated:
     w = input('input your screen resolution (horizontal pixels): ')
     h = input('input your screen resolution (vertical pixels): ')
 
+if not caminfocalibrated:
+    print('camera information not found. starting calibration program...')
+    camcal.calibratecam()
+    try: 
+        data = readfromjson('caminfo.json')
+        distincmparam = data[0]
+        distincm_subparam = data[1]
+        cam_y_offset = data[2]
 
+    except:
+        print('error while reading file, exiting...')
+        time.sleep(10)
+        quit()
+    
+    
 
 
 cam_y_offset = screen_in * 2.54 * 0.5 * h/ (math.sqrt(w**2+h**2))
@@ -146,8 +164,8 @@ def track():
                 eyetoeyedist = getdist(468, 473)
                 vertdist = getdist(9,4)
                 
-                distincm = 3600/eyetoeyedist
-                distincm_sub = 3450/vertdist
+                distincm = distincmparam/eyetoeyedist
+                distincm_sub = distincm_subparam/vertdist
 
                 rz = min(distincm, distincm_sub)
 

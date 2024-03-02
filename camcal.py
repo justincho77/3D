@@ -3,18 +3,13 @@ import cv2 as cv
 import mediapipe as mp
 import keyboard
 import json
+import time
 
 
 sceeninfocalibrated = False
 caminfocalibrated = False
-Camno = 0
+Camno = 1
 
-
-print()
-print()
-print('starting, press Esc to exit.....')
-print()
-print()
 
 def readfromjson(name):
     with open(name, "r") as filehandle:
@@ -35,7 +30,10 @@ def ll(a,b,c,d):
     return math.sqrt((a-c)**2+(b-d)**2)
 
 
-
+def waitforenter():
+    while not keyboard.is_pressed('enter'):
+        continue
+    time.sleep(1)
 
 
 def calibratecam():
@@ -81,30 +79,43 @@ def calibratecam():
                     calparam = 'distincm'
                     print('starting calibration for distance estimation. please prepare a ruler for measuring the actual distance.')
                     do = True
+                    print('calibrating first method for calculation. use the up and down arrow keys to make the value on screen match the actual distance measured, and press enter to finish.')
+                    time.sleep(2)
+                    print('press enter to continue.')
+
+                    waitforenter()
+
+                    distincmparam = 3600
+                    distincm_subparam = 3450
                     while do:
-                        distincmparam = 3600
-                        distincm_subparam = 3450
-                        print('calibrating first method for calculation. use the up and down arrow keys to make the value on screen match the actual distance measured.')
+                        
+                        
                         if calparam == 'distincm':
                             distincm = distincmparam/eyetoeyedist
                             print(distincm)
                             if keyboard.is_pressed('up'):
-                                distincmparam += 1
+                                distincmparam +=0.01
                             elif keyboard.is_pressed('down'):
-                                distincmparam -= 1
+                                distincmparam -= 0.01
 
 
                             elif keyboard.is_pressed('enter'):
                                 calparam = 'distincm_sub'
-
-                        print('calibrating second method for calculation. use the up and down arrow keys to make the value on screen match the actual distance measured.')
+                                do = False
+                    do = True
+                    print('calibrating second method for calculation. use the up and down arrow keys to make the value on screen match the actual distance measured, and press enter to finish.')
+                    time.sleep(1)
+                    print('press enter to continue.')
+                    waitforenter()
+                    while do:
+                        
                         if calparam == 'distincm_sub':
                             distincm_sub = distincm_subparam/vertdist
                             print(distincm_sub)
                             if keyboard.is_pressed('up'):
-                                distincm_subparam += 1
+                                distincm_subparam += 0.01
                             elif keyboard.is_pressed('down'):
-                                distincm_subparam -= 1
+                                distincm_subparam -= 0.01
 
                                 
                             elif keyboard.is_pressed('enter'):
@@ -117,8 +128,11 @@ def calibratecam():
                 cam_y_offset = 12
                 if step == 'yoffsetcalc':
                     do = True
-                    print('starting calibration for the camera offset from the screen center. place your eyes approximately at the center of the screen,')
-                    print('then use the up and down arrow keys to make the value on screen be 0.')
+                    print('starting calibration for the camera offset from the screen center. place your eyes at the center of the screen at a distance of what your camera angle allows,')
+                    print('then use the up and down arrow keys to make the value on screen be 0. press enter to finish.')
+                    time.sleep(7)
+                    print('press enter to continue.')
+                    waitforenter()
                     while do:
                         distincm = distincmparam/eyetoeyedist
                         rz = distincm
@@ -131,9 +145,9 @@ def calibratecam():
                         print(ry)
                         
                         if keyboard.is_pressed('up'):
-                            cam_y_offset += 0.05
+                            cam_y_offset += 0.00005
                         elif keyboard.is_pressed('down'):
-                            cam_y_offset -= 0.05
+                            cam_y_offset -= 0.00005
                         elif keyboard.is_pressed('enter'):
                             step = 'finished'
                             do = False
@@ -142,12 +156,15 @@ def calibratecam():
                     print('calibration finished, outputting file as json.')
                     outputdata = [distincmparam, distincm_subparam, cam_y_offset]
                     write2json('caminfo.json', outputdata)
+                    time.sleep(3)
+                    state = False
 
                                 
-            cv.imshow('image', frame)
+            cv.imshow('view from camera', frame)
             key = cv.waitKey(1)
 
     cap.release()
     cv.destroyAllWindows()
     quit()
 
+calibratecam()
